@@ -1,0 +1,19 @@
+# Terraform generated files
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfvars.json
+
+# Python generated files
+__pycache__/
+*.py[cod]
+
+# Lambda deployment packages
+*.zip
+
+# Local environment files and test artifacts
+.env
+.env.*
+lambda-response.json
+test-event.json
