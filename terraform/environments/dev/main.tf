@@ -27,7 +27,7 @@ module "orders_table" {
 module "create_order_iam" {
   source = "../../modules/iam"
 
-  role_name       = "eventpulse-dev-create-order-role"
+  role_name        = "eventpulse-dev-create-order-role"
   orders_table_arn = module.orders_table.table_arn
 }
 
@@ -47,4 +47,12 @@ module "create_order_lambda" {
   environment_variables = {
     ORDERS_TABLE = module.orders_table.table_name
   }
+}
+
+module "api_gateway" {
+  source = "../../modules/api-gateway"
+
+  api_name                          = "eventpulse-dev-api"
+  create_order_lambda_invoke_arn    = module.create_order_lambda.invoke_arn
+  create_order_lambda_function_name = module.create_order_lambda.function_name
 }

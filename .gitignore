@@ -16,4 +16,14 @@ __pycache__/
 .env
 .env.*
 lambda-response.json
+test-event.json*.tfplan
+*.tfplan
+
+# Local environment files and test artifacts
+.env
+.env.*
+lambda-response.json
 test-event.json
+
+# Saved Terraform plans
+*.tfplan
