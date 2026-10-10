@@ -24,6 +24,16 @@ module "orders_table" {
   table_name = "eventpulse-dev-orders"
 }
 
+resource "aws_sns_topic" "order_notifications" {
+  name = "eventpulse-dev-order-notifications"
+}
+
+resource "aws_sns_topic_subscription" "order_email" {
+  topic_arn = aws_sns_topic.order_notifications.arn
+  protocol  = "email"
+  endpoint  = var.notification_email
+}
+
 module "create_order_iam" {
   source = "../../modules/iam"
 
@@ -62,7 +72,13 @@ module "process_order_lambda" {
   memory_size = 128
 
   filename = "${path.root}/../../../dist/process-order.zip"
+
+  environment_variables = {
+    SNS_TOPIC_ARN = aws_sns_topic.order_notifications.arn
+  }
 }
+
+
 
 resource "aws_lambda_event_source_mapping" "process_orders" {
   event_source_arn  = module.orders_table.stream_arn
@@ -116,6 +132,22 @@ resource "aws_iam_role_policy" "process_order_stream_read" {
         Effect   = "Allow"
         Action   = ["dynamodb:ListStreams"]
         Resource = "*"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy" "process_order_sns_publish" {
+  name = "eventpulse-dev-process-order-sns-publish"
+  role = module.process_order_iam.lambda_execution_role_name
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = ["sns:Publish"]
+        Resource = aws_sns_topic.order_notifications.arn
       }
     ]
   })
