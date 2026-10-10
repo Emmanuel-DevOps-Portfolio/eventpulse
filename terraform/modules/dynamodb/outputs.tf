@@ -7,3 +7,8 @@ output "table_arn" {
   description = "ARN of the DynamoDB orders table"
   value       = aws_dynamodb_table.orders.arn
 }
+
+output "stream_arn" {
+  description = "ARN of the DynamoDB stream for the orders table"
+  value       = aws_dynamodb_table.orders.stream_arn
+}

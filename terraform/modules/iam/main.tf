@@ -21,6 +21,8 @@ resource "aws_iam_role_policy_attachment" "lambda_logs" {
 }
 
 resource "aws_iam_role_policy" "create_order_dynamodb" {
+  count = var.enable_dynamodb_put_item ? 1 : 0
+
   name = "${var.role_name}-dynamodb-put-item"
   role = aws_iam_role.lambda_execution.id
 
